@@ -1,0 +1,151 @@
+{
+	"name": "intelsoftwaredevelopmenttools",
+	"displayName": "Intel® Software Development Tools",
+	"publisher": "intel-corporation",
+	"description": "Displays a catalog of all the docker images of Intel Software. Browse through their full description or download any image.",
+	"version": "1.0.0",
+	"license": "SEE LICENSE IN LICENSE.md",
+	"categories": [
+		"Extension Packs",
+		"Machine Learning",
+		"Other"
+	],
+	"keywords": [
+		"intel",
+		"docker",
+		"openvino",
+		"open visual cloud",
+		"ai"
+	],
+	"extensionDependencies": [
+		"ms-azuretools.vscode-docker"
+	],
+	"icon": "resources/intel.png",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/intel/vscode-software-development-tools"
+	},
+	"homepage": "https://github.com/intel/vscode-software-development-tools/README.md",
+	"enableProposedApi": false,
+	"engines": {
+		"vscode": "^1.60.0"
+	},
+	"activationEvents": [
+		"onView:IntelSoftwareDevelopmentTools",
+		"onviewItem == child",
+		"onCommand:IntelSoftwareDevelopmentTools.createAndSendToTerminal",
+		"onCommand:IntelSoftwareDevelopmentTools.fullDescription"
+	],
+	"main": "./dist/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "IntelSoftwareDevelopmentTools.refresh",
+				"title": "Refresh Catalog",
+				"icon": "$(refresh)"
+			},
+			{
+				"command": "IntelSoftwareDevelopmentTools.fullDescription",
+				"title": "Open full description",
+				"icon": {
+					"light": "resources/light/file.svg",
+					"dark": "resources/dark/file.svg"
+				},
+				"category": "IntelSoftwareDevelopmentTools"
+			},
+			{
+				"command": "IntelSoftwareDevelopmentTools.createAndSendToTerminal",
+				"title": "Download Docker Image",
+				"icon": {
+					"light": "resources/light/cloud-download.svg",
+					"dark": "resources/dark/cloud-download.svg"
+				}
+			},
+			{
+				"command": "IntelSoftwareDevelopmentTools.updateImage",
+				"title": "Update Docker Image",
+				"icon": {
+					"light": "resources/light/sync.svg",
+					"dark": "resources/dark/sync.svg"
+				}
+			}
+		],
+		"menus": {
+			"commandPalette": [],
+			"view/title": [
+				{
+					"command": "IntelSoftwareDevelopmentTools.refresh",
+					"when": "view == IntelSoftwareDevelopmentTools",
+					"group": "navigation"
+				}
+			],
+			"explorer/context": [],
+			"view/item/context": [
+				{
+					"command": "IntelSoftwareDevelopmentTools.fullDescription",
+					"when": "view == IntelSoftwareDevelopmentTools && viewItem == child || viewItem == downloadedChildItem"
+				},
+				{
+					"command": "IntelSoftwareDevelopmentTools.createAndSendToTerminal",
+					"when": "view == IntelSoftwareDevelopmentTools && viewItem == child",
+					"group": "inline"
+				},
+				{
+					"command": "IntelSoftwareDevelopmentTools.updateImage",
+					"when": "view == IntelSoftwareDevelopmentTools &&  viewItem == downloadedChildItem",
+					"group": "inline"
+				}
+			]
+		},
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"icon": "resources/intel.svg",
+					"id": "IntelSoftwareDevelopmentToolsView",
+					"title": "Intel® Software Development Tools"
+				}
+			]
+		},
+		"views": {
+			"IntelSoftwareDevelopmentToolsView": [
+				{
+					"id": "IntelSoftwareDevelopmentTools",
+					"name": ""
+				}
+			]
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run package",
+		"compile": "webpack",
+		"watch": "webpack --watch",
+		"package": "webpack --mode production --devtool hidden-source-map",
+		"test-compile": "tsc -p ./",
+		"test-watch": "tsc -watch -p ./",
+		"pretest": "npm run test-compile && npm run lint",
+		"lint": "eslint src --ext ts",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.1.3",
+		"@types/mocha": "^8.2.2",
+		"@types/node": "14.x",
+		"@types/vscode": "^1.60.0",
+		"@typescript-eslint/eslint-plugin": "^4.26.0",
+		"@typescript-eslint/parser": "^4.26.0",
+		"eslint": "^7.27.0",
+		"glob": "^7.1.7",
+		"mocha": "^8.4.0",
+		"ts-loader": "^9.2.2",
+		"typescript": "^4.3.2",
+		"vscode-test": "^1.5.2",
+		"webpack": "^5.38.1",
+		"webpack-cli": "^4.7.0"
+	},
+	"dependencies": {
+		"make-fetch-happen": "^9.1.0",
+		"temp-dir": "^2.0.0",
+		"tree-kill": "^1.2.2",
+		"vscode-extension-telemetry": "^0.4.0"
+	}
+}
