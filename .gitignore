@@ -1,0 +1,11 @@
+out
+dist
+node_modules
+.vscode-test/
+src/test/
+vsc-extension-quickstart.md
+CHANGELOG.md
+**/.eslintrc.json
+config.json
+*.vsix
+how_to_run_instructions.md
