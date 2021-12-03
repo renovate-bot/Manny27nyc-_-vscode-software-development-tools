@@ -44,7 +44,7 @@ export class TreeDataProvider implements vscode.TreeDataProvider<TreeItemChild> 
         // Returns all the child items in a namespace.
         let getChild = function(namespace:string): Promise<TreeItemChild[] | undefined>{ 
             return new Promise(async function(resolve){
-                let dockerHubAPICall = `${config.dockerHubAPICall}/${namespace}/`;
+                let dockerHubAPICall = `${config.dockerHubAPICall}/${namespace}/?page_size=100`;
                 let fetchedJson:any;
                 let childItems : TreeItemChild[] = []; 
                 do {
@@ -75,6 +75,44 @@ export class TreeDataProvider implements vscode.TreeDataProvider<TreeItemChild> 
                 return resolve(childItems);
             });
         };
+
+        // Returns all the child items in intel namespace which contain 'oneapi' in their name.
+        let getFilteredChild = function(namespace:string): Promise<TreeItemChild[] | undefined>{ 
+            return new Promise(async function(resolve){
+                let dockerHubAPICall = `${config.dockerHubAPICall}/${namespace}/?page_size=100`;
+                let fetchedJson:any;
+                let childItems : TreeItemChild[] = []; 
+                do {
+                        // Fetches JSON from DockerHubAPI containing list of images in this namespace.
+                        fetchedJson = await fetchJson(dockerHubAPICall); 
+                        for (let object in fetchedJson.results) {
+                            if( fetchedJson.results[object].name.search(/oneapi/gi) !== -1){
+                                childItems.push(new TreeItemChild(
+                                    fetchedJson.results[object].name,
+                                    fetchedJson.results[object].description,
+                                    {
+                                        command: "IntelSoftwareDevelopmentTools.fullDescription",
+                                        title: "Full Description",
+                                        // Undefined signifies that Tree item is not being passed as argument. 
+                                        arguments:  [undefined, fetchedJson.results[object].namespace, fetchedJson.results[object].name] 
+                                    },
+                                    // Checks item name against already downloaded images.
+                                    `${repositoriesList.includes(fetchedJson.results[object].name) === true 
+                                                                                                    ? 'downloadedChildItem' 
+                                                                                                    : 'child'
+                                    }`,
+                                    undefined,
+                                    fetchedJson.results[object].user
+                                ));
+                            }
+                        }
+                    } 
+                // Go on fetching until all pages are read.
+                while (fetchedJson.next !== null && (dockerHubAPICall = fetchedJson.next)); 
+                return resolve(childItems);
+            });
+        };
+
         // If tree is not yet defined, generate parent items.
         if(eachItem === undefined) { 
             let dockerHubAPICall:string;
@@ -85,16 +123,36 @@ export class TreeDataProvider implements vscode.TreeDataProvider<TreeItemChild> 
             let convertForAPI:string;
             let i=0;
             for(let eachNameSpace of namespace){
-                dockerHubAPICall = `${config.dockerHubAPICall}/${eachNameSpace}/`;
-                fetchedJson = await fetchJson(dockerHubAPICall);
-                TreeDataProvider.imageTree.push(new TreeItemChild(
-                    `${displayNameSpace[i]} (${fetchedJson.count} Images)`,
-                    `${eachNameSpace}`,
-                    undefined,
-                    "parent",
-                    undefined,
-                    `${eachNameSpace}`
-                ));
+                if(eachNameSpace == 'intel') {
+                    dockerHubAPICall = `${config.dockerHubAPICall}/${eachNameSpace}/?page_size=100`;
+                    fetchedJson = await fetchJson(dockerHubAPICall);
+                    let oneAPIImageCount=0
+                    for (let object in fetchedJson.results) {
+                        if( fetchedJson.results[object].name.search(/oneapi/gi) !== -1){
+                            oneAPIImageCount++;
+                        }
+                    }
+                    TreeDataProvider.imageTree.push(new TreeItemChild(
+                        `${displayNameSpace[i]} (${oneAPIImageCount} Images)`,
+                        `${eachNameSpace}`,
+                        undefined,
+                        "parent",
+                        undefined,
+                        `${eachNameSpace}`
+                    ));
+                }
+                else {
+                    dockerHubAPICall = `${config.dockerHubAPICall}/${eachNameSpace}/`;
+                    fetchedJson = await fetchJson(dockerHubAPICall);
+                    TreeDataProvider.imageTree.push(new TreeItemChild(
+                        `${displayNameSpace[i]} (${fetchedJson.count} Images)`,
+                        `${eachNameSpace}`,
+                        undefined,
+                        "parent",
+                        undefined,
+                        `${eachNameSpace}`
+                    ));
+                }
                 i++;
             }
         }
@@ -102,9 +160,10 @@ export class TreeDataProvider implements vscode.TreeDataProvider<TreeItemChild> 
         return eachItem === undefined 
                             ? TreeDataProvider.imageTree 
                             : eachItem.contextValue === 'parent'
-                                                        ? await getChild(String(eachItem.namespace))
-                                                        : undefined; 
-                             
+                                                        ? eachItem.namespace !== 'intel'
+                                                                                ? await getChild(String(eachItem.namespace))
+                                                                                : await getFilteredChild(String(eachItem.namespace))
+                                                        : undefined;                        
     }
   
     // Runs a child process to fetch names of docker images already present on system.

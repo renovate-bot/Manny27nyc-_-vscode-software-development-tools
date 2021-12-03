@@ -3,7 +3,7 @@
 	"displayName": "Intel® Software Development Tools",
 	"publisher": "intel-corporation",
 	"description": "Displays a catalog of all the docker images of Intel Software. Browse through their full description or download any image.",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"license": "SEE LICENSE IN LICENSE.md",
 	"categories": [
 		"Extension Packs",
@@ -12,7 +12,8 @@
 	],
 	"keywords": [
 		"intel",
-		"docker",
+		"oneapi",
+		"intel-software",
 		"openvino",
 		"open visual cloud",
 		"ai"
@@ -25,7 +26,7 @@
 		"type": "git",
 		"url": "https://github.com/intel/vscode-software-development-tools"
 	},
-	"homepage": "https://github.com/intel/vscode-software-development-tools/README.md",
+	"homepage": "https://github.com/intel/vscode-software-development-tools/blob/main/README.md",
 	"enableProposedApi": false,
 	"engines": {
 		"vscode": "^1.60.0"

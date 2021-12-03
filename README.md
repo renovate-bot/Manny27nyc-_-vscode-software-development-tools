@@ -1,7 +1,7 @@
 ## Intel® Software Development Tools
 The Intel® Software Development Tools extension provides a catalog of Docker* images authored by Intel. Browse through their full description and download any Docker image with a single click. The catalog lists Docker images from the following namespaces:  
 * [OpenVINO™ toolkit (openvino)](https://hub.docker.com/u/openvino)
-* [Intel Corporation (intel) ](https://hub.docker.com/u/intel)
+* [Intel® oneAPI (intel) ](https://hub.docker.com/u/intel)
 * [Open Visual Cloud (openvisualcloud) ](https://hub.docker.com/u/openvisualcloud)
 
 <i>Note: This extension does not provide tools to run a Docker image. To create, manage, and debug containerized applications, you may explore the extension [Docker for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker) which is automatically installed along with the Intel® Software Development Tools extension.</i> 
